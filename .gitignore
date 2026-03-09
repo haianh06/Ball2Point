@@ -7,6 +7,8 @@ env/
 .venv/
 .env
 
+*.mp4
+*.avi
 *.mov
 *.json
 
