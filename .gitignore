@@ -7,17 +7,7 @@ env/
 .venv/
 .env
 
-inputs/*
-!inputs/.gitkeep
-outputs/*
-!outputs/.gitkeep
-
-*.mp4
-*.avi
 *.mov
-*.jpg
-*.jpeg
-*.png
 *.json
 
 *.pt
