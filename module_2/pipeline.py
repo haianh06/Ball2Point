@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
-from config import config
-from keypoint_detector import KeypointDetector
-from homography import HomographyEngine
-from pitch_renderer import StaticPitchRenderer
+from .config import config
+from .keypoint_detector import KeypointDetector
+from .homography import HomographyEngine
+from .pitch_renderer import StaticPitchRenderer
 
 class TacticalPipeline:
     def __init__(self):

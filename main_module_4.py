@@ -11,7 +11,7 @@ from module_1.annotator import SoccerAnnotator
 from module_1.io_utils import get_video_generator, get_video_info
 
 from module_2.pipeline import TacticalPipeline
-from pipeline import HeatmapPipeline
+from module_4.pipeline import HeatmapPipeline
 
 def main():
     VIDEO_PATH = r"inputs/test_1.mp4"

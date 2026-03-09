@@ -10,8 +10,8 @@ from module_1.post_processor import PostProcessor
 from module_1.annotator import SoccerAnnotator
 from module_1.io_utils import get_video_generator, get_video_info
 
-from spatial_math import SpatialEngine
-from speed_estimator import SpeedAndDistanceEstimator
+from module_3.spatial_math import SpatialEngine
+from module_3.speed_estimator import SpeedAndDistanceEstimator
 
 def main():
     VIDEO_PATH = r"inputs/test_1.mp4"

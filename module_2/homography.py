@@ -1,6 +1,6 @@
 import numpy as np
-from config import config
-from view import ViewTransformer
+from .config import config
+from .view import ViewTransformer
 
 class HomographyEngine:
     def __init__(self):

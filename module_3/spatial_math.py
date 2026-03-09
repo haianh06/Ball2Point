@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import numpy as np
 import cv2
 import torch
-from config import config
+from .config import config
 
 class SpatialEngine:
     """Xử lý ngầm phép chiếu từ Camera Pixel sang Tọa độ Mét trên sân (Có Fallback)"""

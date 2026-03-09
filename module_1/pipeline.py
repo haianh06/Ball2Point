@@ -1,10 +1,22 @@
+import sys
+from pathlib import Path
+
+current_dir = Path(__file__).resolve().parent
+PROJECT_ROOT = current_dir
+
+while not (PROJECT_ROOT / "module_1").exists() and PROJECT_ROOT.parent != PROJECT_ROOT:
+    PROJECT_ROOT = PROJECT_ROOT.parent
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from tqdm import tqdm
 import supervision as sv
-from config import config
-from io_utils import get_video_generator, get_video_info
-from detector import SoccerDetector
-from tracker import PlayerTracker
-from team_assigner import TeamAssigner
+from .config import config
+from .io_utils import get_video_generator, get_video_info
+from .detector import SoccerDetector
+from .tracker import PlayerTracker
+from .team_assigner import TeamAssigner
 
 class Module1Pipeline:
     def __init__(self):
