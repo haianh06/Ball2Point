@@ -6,10 +6,9 @@ class SoccerAnnotator:
     def __init__(self):
         self.ellipse_annotator = sv.EllipseAnnotator(thickness=2)
         
-        # Bảng màu cứng
         self.team_colors = {
-            0: sv.Color(255, 0, 0),   # Đội 0 (Blue)
-            1: sv.Color(0, 0, 255)    # Đội 1 (Red)
+            0: sv.Color(255, 0, 0), 
+            1: sv.Color(0, 0, 255)
         }
         self.referee_color = sv.Color(0, 0, 0)
         self.ball_color = sv.Color(255, 255, 255)
@@ -25,7 +24,7 @@ class SoccerAnnotator:
         if players_data:
             boxes, tracker_ids, class_ids = [], [], []
             for tid, box in players_data.items():
-                if tid != 'speed_info':  # Bỏ qua key speed_info
+                if tid != 'speed_info':
                     boxes.append(box)
                     tracker_ids.append(tid)
                     class_ids.append(team_data.get(tid, 0))
@@ -42,13 +41,11 @@ class SoccerAnnotator:
                     self.ellipse_annotator.color = color
                     annotated = self.ellipse_annotator.annotate(annotated, team_dets)
                     
-            # UI CỦA ABDULLAH TAREK: Vẽ biển báo dưới chân
             for tid, box in zip(tracker_ids, boxes):
                 info = speed_info_data.get(tid)
                 if info:
                     speed = info['speed']
                     dist = info['distance']
-                    # Chỉ vẽ nếu tốc độ > 0 để tránh rác màn hình
                     if speed > 0:
                         x1, y1, x2, y2 = box
                         x_center = int((x1 + x2) / 2)
@@ -56,16 +53,10 @@ class SoccerAnnotator:
                         
                         text = f"{speed} km/h | {dist} m"
                         text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.3, 1)[0]
-                        
-                        # Vẽ background đen
-                        # cv2.rectangle(annotated, 
-                        #               (x_center - text_size[0]//2 - 2, y_bottom + 2),
-                        #               (x_center + text_size[0]//2 + 2, y_bottom + 2 + text_size[1] + 4),
-                        #               (0, 0, 0), cv2.FILLED)
-                        # Text trắng
+
                         cv2.putText(annotated, text, 
                                     (x_center - text_size[0]//2, y_bottom + 10 + text_size[1]),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
 
         # 2. Vẽ Trọng tài
         refs_data = tracking_data.get('referee', {}).get(frame_idx, {})

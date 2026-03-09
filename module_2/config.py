@@ -7,11 +7,10 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 @dataclass
 class TacticalConfig:
     KEYPOINT_MODEL_PATH: str = os.getenv("POSE_MODEL_PATH", str(PROJECT_ROOT / "Models/weights/best_keypoints.pt"))
-    # Trỏ đến file ảnh sân bóng tĩnh của cậu
+    
     PITCH_IMAGE_PATH: str = str(PROJECT_ROOT / "pitch_map.png") 
     CONFIDENCE_THRESHOLD: float = 0.5
     
-    # Kích thước sân chuẩn FIFA (Mét)
     REAL_LENGTH: float = 105.0
     REAL_WIDTH: float = 68.0
 

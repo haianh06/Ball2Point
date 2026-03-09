@@ -25,7 +25,6 @@ class Module1Pipeline:
         self.assigner = TeamAssigner(config.SIGLIP_MODEL_NAME, config.N_TEAMS, config.UMAP_COMPONENTS)
         
     def train_clustering(self, video_path: str, max_frames: int = 300, stride: int = 10):
-        """Thu thập ngẫu nhiên các crop của cầu thủ để train model chia đội."""
         print("Đang thu thập dữ liệu train chia đội...")
         generator = get_video_generator(video_path, max_frames=max_frames)
         crops = []

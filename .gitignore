@@ -20,8 +20,8 @@ outputs/*
 *.png
 *.json
 
-Models/weights/*.pt
-Models/weights/*.pth
+*.pt
+*.pth
 *.onnx
 *.engine
 *.trt
