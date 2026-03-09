@@ -26,7 +26,7 @@ from module_5.pipeline import PitchControlPipeline
 
 # --- CẤU HÌNH GIAO DIỆN ---
 st.set_page_config(page_title="Ball2Point", page_icon="⚽", layout="wide")
-PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1] if Path(__file__).parent.name == 'app' else Path(__file__).resolve().parent
 
 def resize_to_match_height(img1: np.ndarray, img2: np.ndarray):
     """Hàm đồng bộ chiều cao 2 ảnh để ghép Side-by-side"""
@@ -79,7 +79,7 @@ def main():
             f.write(bytes_data)
                 
         video_info = get_video_info(input_path)
-        actual_frames = video_info.total_frames if process_mode == "Toàn bộ Video" else min(100, video_info.total_frames)
+        actual_frames = video_info.total_frames if process_mode == "Toàn bộ Video" else min(500, video_info.total_frames)
 
         # UI Progress
         progress_bar = st.progress(0)
@@ -111,11 +111,12 @@ def main():
                 spatial_engine.update_homography(frame)
                 players_dict = tracking_data.get('player', {}).get(frame_idx, {})
                 spatial_data[frame_idx] = {}
-                if spatial_engine.matrix is not None:
-                    for tid, box in players_dict.items():
-                        if tid != 'speed_info':
-                            pts = spatial_engine.pixels_to_meters([box])
-                            if pts: spatial_data[frame_idx][tid] = pts[0]
+                
+                # Bỏ lệnh if matrix is not None để kích hoạt Immortal Fallback
+                for tid, box in players_dict.items():
+                    if tid != 'speed_info':
+                        pts = spatial_engine.pixels_to_meters([box])
+                        if pts: spatial_data[frame_idx][tid] = pts[0]
             
             tracking_data = speed_estimator.calculate_speed_and_distance(tracking_data, spatial_data)
         progress_bar.progress(50)
