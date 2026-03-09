@@ -1,9 +1,9 @@
 import cv2
 import os
 from tqdm import tqdm
-from .pipeline import Module1Pipeline
-from .annotator import SoccerAnnotator
-from .config import ModelConfig
+from pipeline import Module1Pipeline
+from annotator import SoccerAnnotator
+from config import ModelConfig
 
 def main():
     if not os.path.exists(ModelConfig.INPUT_VIDEO_PATH):

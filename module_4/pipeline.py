@@ -1,4 +1,4 @@
-from .heatmap_engine import HeatmapEngine
+from heatmap_engine import HeatmapEngine
 from module_2.pitch_renderer import StaticPitchRenderer
 
 class HeatmapPipeline:

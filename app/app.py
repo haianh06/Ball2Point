@@ -60,7 +60,7 @@ def main():
         
         st.markdown("---")
         st.subheader("Tùy chọn Render")
-        process_mode = st.radio("Chế độ xử lý:", ["Toàn bộ Video", "Chỉ Test (100 Frames)"])
+        process_mode = st.radio("Chế độ xử lý:", ["Toàn bộ Video", "Chỉ Test (500 Frames)"])
         
         start_btn = st.button("🚀 XỬ LÝ DỮ LIỆU", type="primary", use_container_width=True)
 
@@ -207,15 +207,29 @@ def main():
                 with open(stats_path, 'r') as f:
                     stats_data = json.load(f)
                 
+                # Biến JSON thành Pandas DataFrame
                 df = pd.DataFrame(stats_data).T
                 df.index.name = "Mã Cầu Thủ (ID)"
+                
+                # --- LOGIC TÍNH VẬN TỐC TRUNG BÌNH ---
+                total_time_sec = actual_frames / video_info.fps
+                
+                # Tính v = s/t (đổi từ m/s sang km/h) và làm tròn 2 chữ số
+                df["avg_speed_kmh"] = (df["total_distance_m"] / total_time_sec) * 3.6
+                df["avg_speed_kmh"] = df["avg_speed_kmh"].round(2)
+                
+                # Đổi tên cột cho UI
                 df.rename(columns={
                     "total_distance_m": "Quãng đường (Mét)",
-                    "top_speed_kmh": "Vận tốc Max (km/h)"
+                    "avg_speed_kmh": "Vận tốc TB (km/h)"
                 }, inplace=True)
                 
+                # Lọc bỏ cột top_speed_kmh bị nhiễu, chỉ show Quãng đường và Vận tốc TB
+                df_display = df[["Quãng đường (Mét)", "Vận tốc TB (km/h)"]]
+                
+                # Style Dataframe: Highlight giá trị cao nhất
                 st.dataframe(
-                    df.style.highlight_max(axis=0, color='#6b2121'), 
+                    df_display.style.highlight_max(axis=0, color='#2e6b21'), # Đổi màu highlight sang xanh cho dịu mắt
                     use_container_width=True,
                     height=400
                 )

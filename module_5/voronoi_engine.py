@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from .config import config
+from config import config
 
 class VoronoiEngine:
     def __init__(self):

@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import os
-from .config import config
+from config import config
 
 # Lấy ảnh gốc của sân cỏ từ Module 2 để làm nền
 from module_2.pitch_renderer import StaticPitchRenderer

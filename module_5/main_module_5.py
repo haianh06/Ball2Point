@@ -2,14 +2,17 @@ import os
 import cv2
 import numpy as np
 from tqdm import tqdm
-
+import sys
+from pathlib import Path
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.append(str(ROOT))
 from module_1.pipeline import Module1Pipeline
 from module_1.post_processor import PostProcessor
 from module_1.annotator import SoccerAnnotator
 from module_1.io_utils import get_video_generator, get_video_info
 
 from module_2.pipeline import TacticalPipeline
-from .pipeline import PitchControlPipeline
+from pipeline import PitchControlPipeline
 
 def resize_to_match_height(img1: np.ndarray, img2: np.ndarray):
     h1 = img1.shape[0]

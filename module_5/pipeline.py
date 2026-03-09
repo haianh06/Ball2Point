@@ -1,6 +1,6 @@
 import numpy as np
-from .config import config
-from .voronoi_engine import VoronoiEngine
+from config import config
+from voronoi_engine import VoronoiEngine
 
 class PitchControlPipeline:
     def __init__(self):

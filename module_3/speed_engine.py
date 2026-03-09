@@ -1,7 +1,7 @@
 import numpy as np
 from collections import deque
 import json
-from .config import config
+from config import config
 
 class SpeedEngine:
     def __init__(self, fps: int = 30):
