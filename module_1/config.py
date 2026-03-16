@@ -8,7 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 @dataclass
 class ModelConfig:
-    DETECTION_MODEL_PATH: str = os.getenv("YOLO_MODEL_PATH", str(PROJECT_ROOT / "Models/weights/best_detection_v2.pt"))
+    DETECTION_MODEL_PATH: str = os.getenv("YOLO_MODEL_PATH", str(PROJECT_ROOT / "Models/weights/best_detection.pt"))
     SIGLIP_MODEL_NAME: str = "google/siglip-base-patch16-224"
     
     INPUT_VIDEO_PATH: str = os.getenv("INPUT_VIDEO_PATH", "inputs/test_1.mp4")

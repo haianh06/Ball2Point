@@ -17,8 +17,8 @@ class StaticPitchRenderer:
         self.draw_height = self.img_height - 2 * self.margin_y
         
         self.team_colors = {
-            0: (255, 0, 0),    # Blue (Team 0)
-            1: (0, 0, 255)     # Red (Team 1)
+            1: (255, 0, 0),    # Blue (Team 0)
+            0: (0, 0, 255)     # Red (Team 1)
         }
         self.gk_color = (0, 255, 255)    # Yellow (Goalkeeper)
         self.ref_color = (0, 0, 0)       # Black (Referee)
