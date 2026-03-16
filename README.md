@@ -217,27 +217,15 @@ Ball2Point employs a **modular microservices architecture** with independent com
 
 ### Module Performance Summary
 
-| Module | Accuracy | Confidence | Status |
-|--------|----------|-----------|--------|
-| Detection & Tracking | 92.4% | 94.2% | ✅ Excellent |
-| Team Clustering | 97.1% | 98.2% | ✅ Excellent |
-| Homography Mapping | 95.8% | 96.9% | ✅ Excellent |
-| Speed Profiling | 91.2% | 93.4% | ✅ Good |
-| Heatmap Generation | 98.1% | 99.0% | ✅ Excellent |
-| Voronoi Analysis | 96.5% | 97.8% | ✅ Excellent |
-| **OVERALL** | **94.2%** | **95.9%** | **✅ Production-Ready** |
-
-### Confidence by Lighting Conditions
-
-| Condition | Confidence |
-|-----------|-----------|
-| Daylight (optimal) | 96.2% 🟢 |
-| Indoor stadium | 93.1% 🟢 |
-| Twilight | 81.4% 🟡 |
-| Rainy/Foggy | 76.3% 🟡 |
-| Poor camera angle | 72.1% 🟡 |
-
----
+| Module | Accuracy | Confidence |
+|--------|----------|-----------|
+| Detection & Tracking | 92.4% | 94.2% |
+| Team Clustering | 97.1% | 98.2% |
+| Homography Mapping | 95.8% | 96.9% | |
+| Speed Profiling | 91.2% | 93.4% |
+| Heatmap Generation | 98.1% | 99.0% |
+| Voronoi Analysis | 96.5% | 97.8% |
+| **OVERALL** | **94.2%** | **95.9%** |
 
 ## 🧠 Technologies & Models
 
@@ -279,27 +267,11 @@ Seaborn 0.12+             # Statistical plotting
 
 ---
 
-## 💻 System Requirements
-
-### Minimum Requirements
-- **OS:** Windows 10+ / Ubuntu 18.04+ / macOS 10.14+
-- **CPU:** Intel i7 / AMD Ryzen 5 (quad-core)
-- **RAM:** 8 GB
-- **Disk:** 50 GB (models + sample videos)
-
-### Recommended Requirements
-- **GPU:** NVIDIA RTX 3060 / RTX 4070+ (CUDA 12.1)
-- **VRAM:** 8 GB+
-- **CPU:** Intel i9 / AMD Ryzen 9
-- **RAM:** 32 GB
-- **Disk:** NVMe SSD (500 GB+)
-
 ### Performance Reference
-| Setup | Speed | Latency | Cost |
-|-------|-------|---------|------|
-| CPU Only | ~8 FPS | ~125ms | $0 |
-| GPU (RTX 3060) | ~45 FPS | ~22ms | $12/mo |
-| GPU (RTX 4090) | ~120 FPS | ~8ms | $50/mo |
+| Setup | Speed | Latency |
+|-------|-------|---------|
+| CPU Only | ~8 FPS | ~30m |
+| GPU (RTX 4050) | ~30 FPS | ~8m |
 
 ---
 
@@ -539,32 +511,6 @@ heatmap_map.export_image("output/heatmap.png")
   - Team colors
   - Speed indicators
   - Tactical positions
-
----
-
-## 📈 Performance Benchmarks
-
-### Inference Speed
-
-| Module | GPU (RTX 3060) | CPU (i7-12700) | Bottleneck |
-|--------|---|---|---|
-| Detection | 22ms | 280ms | YOLO inference |
-| Tracking | 8ms | 45ms | Hungarian algorithm |
-| Homography | 5ms | 12ms | RANSAC |
-| Speed Est. | 2ms | 8ms | Math operations |
-| Heatmap Gen. | 3ms | 10ms | Gaussian blur |
-| Voronoi | 8ms | 25ms | Delaunay computation |
-| **Total** | **48ms** (21 FPS) | **380ms** (2.6 FPS) | - |
-
-### Memory Usage
-
-| Component | Memory |
-|-----------|--------|
-| YOLO Detection | 2.1 GB (GPU) |
-| Tracking buffer | 150 MB |
-| Pipeline state | 200 MB |
-| Video buffer | 500 MB |
-| **Total** | ~3 GB |
 
 ---
 
