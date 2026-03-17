@@ -51,7 +51,7 @@ class StaticPitchRenderer:
                 
                 # Hiển thị text km/h nếu tốc độ > đi bộ
                 if speed_info and speed_info['speed'] > 6.0:
-                    cv2.putText(canvas, f"{speed_info['speed']}km/h", (x+13, y+4), 
+                    cv2.putText(canvas, f"{speed_info['speed']}m/s", (x+13, y+4), 
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
 
         # Vẽ Thủ môn

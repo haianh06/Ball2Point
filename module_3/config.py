@@ -17,7 +17,7 @@ class SpeedConfig:
     WINDOW_SIZE: int = 5  # Tính toán mỗi batch 5 frame (chống nhiễu)
     STATS_OUTPUT_PATH: str = os.getenv("STATS_OUTPUT_PATH", str(PROJECT_ROOT / "outputs/player_statistics.json"))
     
-    # THÊM MỚI: Tỷ lệ nội suy dự phòng (1 pixel trên màn hình ~ 0.05 mét ngoài đời)
+    # Tỷ lệ nội suy dự phòng (1 pixel trên màn hình ~ 0.05 mét ngoài đời)
     # Chỉ dùng đến con số này nếu từ đầu đến cuối video không tìm thấy mặt sân
     PIXEL_TO_METER_FALLBACK: float = 0.05
     

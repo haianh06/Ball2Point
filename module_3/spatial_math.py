@@ -5,14 +5,13 @@ import torch
 from .config import config
 
 class SpatialEngine:
-    """Xử lý ngầm phép chiếu từ Camera Pixel sang Tọa độ Mét trên sân (Có Fallback)"""
+    """Xử lý ngầm phép chiếu từ Camera Pixel sang Tọa độ Mét trên sân"""
     def __init__(self):
         self.device = '0' if torch.cuda.is_available() else 'cpu'
         self.model = YOLO(config.KEYPOINT_MODEL_PATH)
         self.target_points = config.get_standard_pitch_points()
         
         self.matrix = None
-        # Cache lưu lại ma trận của frame hợp lệ gần nhất
         self.last_valid_matrix = None 
 
     def update_homography(self, frame: np.ndarray):
