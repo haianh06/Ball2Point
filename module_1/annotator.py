@@ -51,7 +51,7 @@ class SoccerAnnotator:
                         x_center = int((x1 + x2) / 2)
                         y_bottom = int(y2)
                         
-                        text = f"{speed} km/h | {dist} m"
+                        text = f"{speed} m/s | {dist} m"
                         text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.3, 1)[0]
 
                         cv2.putText(annotated, text, 

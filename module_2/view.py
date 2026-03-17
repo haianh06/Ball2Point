@@ -22,6 +22,10 @@ class ViewTransformer:
         matrix, mask = cv2.findHomography(self.source, self.target, method=cv2.RANSAC, ransacReprojThreshold=5.0)
         if matrix is None:
             raise ValueError("Could not compute homography matrix")
+        
+        matrix_rank = np.linalg.matrix_rank(matrix)
+        if matrix_rank < 3:
+            raise ValueError(f"Degenerate homography matrix: rank={matrix_rank} < 3")
 
         self.matrix = matrix
         self.mask = mask
