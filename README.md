@@ -15,14 +15,12 @@
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
-- [Performance Metrics](#performance-metrics)
 - [Technologies & Models](#technologies--models)
 - [System Requirements](#system-requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Usage Guide](#usage-guide)
 - [API Reference](#api-reference)
-- [Performance Benchmarks](#performance-benchmarks)
 - [Known Limitations](#known-limitations)
 - [Contributing](#contributing)
 - [License](#license)
@@ -212,20 +210,6 @@ Ball2Point employs a **modular microservices architecture** with independent com
 ```
 
 ---
-
-## 📊 Performance Metrics
-
-### Module Performance Summary
-
-| Module | Accuracy | Confidence |
-|--------|----------|-----------|
-| Detection & Tracking | 92.4% | 94.2% |
-| Team Clustering | 97.1% | 98.2% |
-| Homography Mapping | 95.8% | 96.9% | |
-| Speed Profiling | 91.2% | 93.4% |
-| Heatmap Generation | 98.1% | 99.0% |
-| Voronoi Analysis | 96.5% | 97.8% |
-| **OVERALL** | **94.2%** | **95.9%** |
 
 ## 🧠 Technologies & Models
 
