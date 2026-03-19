@@ -7,10 +7,6 @@ class HeatmapPipeline:
         self.engine = HeatmapEngine(self.scaler.img_width, self.scaler.img_height)
 
     def process_frame(self, pitch_data: dict):
-        """
-        Nhận tọa độ hệ mét từ Module 2, chuyển sang pixel ảnh tĩnh
-        và ném vào Engine để tích lũy ngầm. Không can thiệp vào Video.
-        """
         if not pitch_data:
             return
 
@@ -20,5 +16,4 @@ class HeatmapPipeline:
                 self.engine.update(tid, px, py)
 
     def export_results(self):
-        """Gọi hàm này ở cuối luồng main.py để kích hoạt việc xuất file"""
         self.engine.export_all_heatmaps()

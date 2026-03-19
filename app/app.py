@@ -201,29 +201,25 @@ def main():
                 with open(stats_path, 'r') as f:
                     stats_data = json.load(f)
                 
-                # Biến JSON thành Pandas DataFrame
+                # JSON to Daraframe
                 df = pd.DataFrame(stats_data).T
                 df.index.name = "Player ID"
                 
-                # --- LOGIC TÍNH VẬN TỐC TRUNG BÌNH ---
+                # Average Speed Calculation
                 total_time_sec = actual_frames / video_info.fps
                 
-                # Tính v = s/t (đổi từ m/s sang km/h) và làm tròn 2 chữ số
                 df["avg_speed_kmh"] = (df["total_distance_m"] / total_time_sec) * 3.6
                 df["avg_speed_kmh"] = df["avg_speed_kmh"].round(2)
                 
-                # Đổi tên cột cho UI
                 df.rename(columns={
                     "total_distance_m": "Total Distance (m)",
                     "avg_speed_kmh": "Average Speed (m/s)"
                 }, inplace=True)
                 
-                # Lọc bỏ cột top_speed_kmh bị nhiễu, chỉ show Quãng đường và Vận tốc TB
                 df_display = df[["Total Distance (m)", "Average Speed (m/s)"]]
-                
-                # Style Dataframe: Highlight giá trị cao nhất
+
                 st.dataframe(
-                    df_display.style.highlight_max(axis=0, color='#2e6b21'), # Đổi màu highlight sang xanh cho dịu mắt
+                    df_display.style.highlight_max(axis=0, color='#2e6b21'),
                     use_container_width=True,
                     height=400
                 )
