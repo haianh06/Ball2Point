@@ -5,7 +5,6 @@ import torch
 from .config import config
 
 class SpatialEngine:
-    """Xử lý ngầm phép chiếu từ Camera Pixel sang Tọa độ Mét trên sân"""
     def __init__(self):
         self.device = '0' if torch.cuda.is_available() else 'cpu'
         self.model = YOLO(config.KEYPOINT_MODEL_PATH)
@@ -16,8 +15,7 @@ class SpatialEngine:
 
     def update_homography(self, frame: np.ndarray):
         results = self.model(frame, device=self.device, verbose=False)[0]
-        
-        # Kiểm tra nếu model không bắt được bất kỳ điểm nào
+        # Check if keypoints are detected and valid
         has_keypoints = hasattr(results, 'keypoints') and results.keypoints is not None and len(results.keypoints.data) > 0
         if not has_keypoints:
             self.matrix = self.last_valid_matrix
@@ -44,7 +42,7 @@ class SpatialEngine:
             
             if matrix is not None:
                 self.matrix = matrix
-                self.last_valid_matrix = matrix  # Cập nhật cache
+                self.last_valid_matrix = matrix  # Cache Update last valid matrix
             else:
                 self.matrix = self.last_valid_matrix
         else:
@@ -54,13 +52,13 @@ class SpatialEngine:
         if not boxes:
             return []
 
-        # Lấy tâm đáy (Gót chân cầu thủ)
+        # Get the bottom center of each bounding box as the point to transform
         bottom_centers = np.array([
             [(box[0] + box[2]) / 2.0, box[3]]
             for box in boxes
         ], dtype=np.float32)
 
-        # TRƯỜNG HỢP 1: Có ma trận (từ frame hiện tại hoặc lấy từ Cache)
+        # CASE 1: Valid homography matrix exists, use it to transform points
         if self.matrix is not None:
             bottom_centers_reshaped = bottom_centers.reshape(-1, 1, 2)
             try:
@@ -69,7 +67,6 @@ class SpatialEngine:
             except Exception:
                 pass
 
-        # TRƯỜNG HỢP 2: Fallback (Ước lượng thô từ pixel sang mét)
-        # Hệ thống vẫn tiếp tục tính được vận tốc thay vì ném ra mảng rỗng
+        # CASE 2: Fallback - No valid homography, use a fixed pixel-to-meter ratio
         fallback_points = bottom_centers * config.PIXEL_TO_METER_FALLBACK
         return fallback_points.tolist()

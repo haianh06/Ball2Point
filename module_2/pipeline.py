@@ -26,7 +26,6 @@ class TacticalPipeline:
 
         if self.homography.transformer is not None:
             for tid, box in players_dict.items():
-                # CHỐT CHẶN BẢO VỆ: Bỏ qua metadata tốc độ bị module khác nhét vào
                 if tid == 'speed_info':
                     continue
                 

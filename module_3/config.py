@@ -9,21 +9,18 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 @dataclass
 class SpeedConfig:
-    # 1. Config Mô hình Không gian
     KEYPOINT_MODEL_PATH: str = os.getenv("POSE_MODEL_PATH", str(PROJECT_ROOT / "Models/weights/best_keypoints.pt"))
     CONFIDENCE_THRESHOLD: float = 0.5
     
-    # 2. Config Vận tốc & Thống kê
-    WINDOW_SIZE: int = 5  # Tính toán mỗi batch 5 frame (chống nhiễu)
+    WINDOW_SIZE: int = 5  # Calculate speed over the last 5 frames
     STATS_OUTPUT_PATH: str = os.getenv("STATS_OUTPUT_PATH", str(PROJECT_ROOT / "outputs/player_statistics.json"))
     
-    # Tỷ lệ nội suy dự phòng (1 pixel trên màn hình ~ 0.05 mét ngoài đời)
-    # Chỉ dùng đến con số này nếu từ đầu đến cuối video không tìm thấy mặt sân
+    # Fallback pixel-to-meter ratio if homography fails (e.g., no field detected)
     PIXEL_TO_METER_FALLBACK: float = 0.05
     
     @staticmethod
     def get_standard_pitch_points() -> dict:
-        """Tọa độ mét chuẩn FIFA để tính Homography."""
+        """Standard FIFA meter coordinates for Homography calculation."""
         return {
             0: [0.0, 0.0],                          1: [0.0, 13.85],
             2: [16.5, 13.85],                       3: [0.0, 54.15],

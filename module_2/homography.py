@@ -5,12 +5,12 @@ from .view import ViewTransformer
 class HomographyEngine:
     def __init__(self):
         self.transformer = None
-        # Lấy tọa độ chuẩn 29 điểm của FIFA từ config một lần duy nhất
+        # Get 29 standard pitch points from config to use as target points for homography transformation
         self.target_points_dict = config.get_standard_pitch_points()
 
     def update_matrix(self, frame_kpts: np.ndarray):
         """
-        Cập nhật ma trận ViewTransformer chỉ cần nhận keypoints của frame (1 tham số)
+        Update the ViewTransformer matrix with keypoints from the current frame (1 parameter)
         """
         if len(frame_kpts) != 29:
             self.transformer = None
@@ -35,7 +35,7 @@ class HomographyEngine:
         if self.transformer is None or not boxes:
             return []
 
-        # Fix lỗi Bottom-Center để chiếu chuẩn xác xuống mặt cỏ
+        # Fixed: Transform the bottom center of each bounding box to the pitch coordinates
         bottom_centers = np.array([
             [(box[0] + box[2]) / 2.0, box[3]]
             for box in boxes

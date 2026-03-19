@@ -79,7 +79,7 @@ def main():
             f.write(bytes_data)
                 
         video_info = get_video_info(input_path)
-        actual_frames = video_info.total_frames if process_mode == "Toàn bộ Video" else min(500, video_info.total_frames)
+        actual_frames = video_info.total_frames if process_mode == "Toàn bộ Video" else min(200, video_info.total_frames)
 
         # UI Progress
         progress_bar = st.progress(0)
@@ -221,11 +221,11 @@ def main():
                 # Đổi tên cột cho UI
                 df.rename(columns={
                     "total_distance_m": "Quãng đường (Mét)",
-                    "avg_speed_kmh": "Vận tốc TB (km/h)"
+                    "avg_speed_kmh": "Vận tốc TB (m/s)"
                 }, inplace=True)
                 
                 # Lọc bỏ cột top_speed_kmh bị nhiễu, chỉ show Quãng đường và Vận tốc TB
-                df_display = df[["Quãng đường (Mét)", "Vận tốc TB (km/h)"]]
+                df_display = df[["Quãng đường (Mét)", "Vận tốc TB (m/s)"]]
                 
                 # Style Dataframe: Highlight giá trị cao nhất
                 st.dataframe(

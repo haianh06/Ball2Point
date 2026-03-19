@@ -13,7 +13,7 @@ from module_1.io_utils import get_video_generator, get_video_info
 from module_2.pipeline import TacticalPipeline
 
 def resize_to_match_height(img1: np.ndarray, img2: np.ndarray):
-    """Resize ảnh tactical map bằng chiều cao ảnh gốc video"""
+    """Resize image to match height of the other while keeping aspect ratio"""
     h1 = img1.shape[0]
     h2, w2 = img2.shape[:2]
     if h1 != h2:
@@ -25,7 +25,7 @@ def main():
     VIDEO_PATH = os.getenv("INPUT_VIDEO_PATH")
     OUTPUT_PATH = os.getenv("OUTPUT_VIDEO_PATH")
 
-    MAX_FRAMES = -1  # Set thành 100 hoặc 300 nếu muốn test nhanh
+    MAX_FRAMES = -1
     
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 
@@ -37,7 +37,7 @@ def main():
     print("\n[2/4] PHASE 2: Detection, Tracking & Clustering...")
     tracking_data = mod1_pipeline.process_video(VIDEO_PATH, max_frames=MAX_FRAMES)
 
-    print("\n[3/4] PHASE 3: Data Interpolation (Nội suy bóng mất dấu)...")
+    print("\n[3/4] PHASE 3: Data Interpolation...")
     tracking_data = PostProcessor.interpolate_ball(tracking_data, max_gap=30)
 
     print("\n[4/4] PHASE 4: Rendering Tactical Mapping Side-by-Side...")

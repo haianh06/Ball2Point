@@ -9,7 +9,6 @@ class KeypointDetector:
         self.device = '0' if torch.cuda.is_available() else 'cpu'
 
     def detect(self, frame: np.ndarray) -> np.ndarray:
-        # Ép chạy trên GPU bằng tham số device
         results = self.model(frame, device=self.device, verbose=False)[0]
         if hasattr(results, 'keypoints') and results.keypoints is not None:
             kpts = results.keypoints.data.cpu().numpy()

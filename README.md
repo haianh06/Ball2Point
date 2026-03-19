@@ -263,6 +263,8 @@ Seaborn 0.12+             # Statistical plotting
 
 ### Prerequisites
 
+**You can download our models here:
+
 **1. Install FFmpeg (Required for video encoding)**
 
 **Windows:**
