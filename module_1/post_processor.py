@@ -3,7 +3,7 @@ import pandas as pd
 class PostProcessor:
     @staticmethod
     def interpolate_ball(tracking_data: dict, max_gap: int = 30) -> dict:
-        """Nội suy tuyến tính để điền vào các frame bị mất dấu bóng."""
+        """Iterpolate ball positions for frames where it was not detected, using linear interpolation."""
         ball_data = tracking_data.get('ball', {})
         if not ball_data:
             return tracking_data

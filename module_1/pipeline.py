@@ -25,7 +25,7 @@ class Module1Pipeline:
         self.assigner = TeamAssigner(config.SIGLIP_MODEL_NAME, config.N_TEAMS, config.UMAP_COMPONENTS)
         
     def train_clustering(self, video_path: str, max_frames: int = 300, stride: int = 10):
-        print("Đang thu thập dữ liệu train chia đội...")
+        print("Collecting player crops for team clustering...")
         generator = get_video_generator(video_path, max_frames=max_frames)
         crops = []
         
@@ -37,11 +37,11 @@ class Module1Pipeline:
                 crops.extend([sv.cv2_to_pillow(sv.crop_image(frame, box)) for box in players.xyxy])
                 
         self.assigner.fit(crops)
-        print("Huấn luyện chia đội hoàn tất!")
+        print("Team clustering training completed!")
 
     def process_video(self, video_path: str, max_frames: int = -1) -> dict:
         """
-        Chạy pipeline chính. Trả về dictionary tracking data.
+        Run the main pipeline. Returns a dictionary with tracking data.
         """
         if not self.assigner.is_trained:
             self.train_clustering(video_path)
@@ -54,7 +54,7 @@ class Module1Pipeline:
             'player': {}, 'ball': {}, 'referee': {}, 'player_team_ids': {}
         }
         
-        print("Bắt đầu phân tích Detection & Tracking...")
+        print("Starting detection and tracking...")
         for frame_idx, frame in tqdm(enumerate(generator), total=total_frames):
             # 1. Detect
             players, ball, referees = self.detector.detect(frame)
@@ -65,7 +65,7 @@ class Module1Pipeline:
             # 3. Assign Teams
             team_ids = self.assigner.predict(frame, players)
             
-            # 4. Lưu data
+            # 4. Save tracking data
             if len(players.xyxy) > 0:
                 tracking_data['player'][frame_idx] = {
                     tid: box.tolist() for tid, box in zip(players.tracker_id, players.xyxy)

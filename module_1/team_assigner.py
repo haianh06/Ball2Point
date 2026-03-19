@@ -18,7 +18,7 @@ class TeamAssigner:
         self.is_trained = False
         
     def extract_features(self, crops: List[np.ndarray], batch_size: int = 16) -> np.ndarray:
-        """Trích xuất vector đặc trưng và ép giải phóng VRAM."""
+        """Extract feature embeddings from player crops using the Siglip model."""
         all_embeddings = []
         
         with torch.no_grad():
@@ -29,23 +29,23 @@ class TeamAssigner:
                 embeddings = torch.mean(outputs.last_hidden_state, dim=1).cpu().numpy()
                 all_embeddings.append(embeddings)
                 
-        # Bắt buộc dọn cache VRAM sau khi inference batch
+        # Clear GPU cache after feature extraction to free up memory
         if self.device == 'cuda':
             torch.cuda.empty_cache()
             
         return np.concatenate(all_embeddings, axis=0) if all_embeddings else np.empty((0, 768))
 
     def fit(self, crops: List[np.ndarray]):
-        """Train UMAP và KMeans."""
+        """Train UMAP and KMeans."""
         if not crops:
-            raise ValueError("Không có crop data để train.")
+            raise ValueError("No crop data available for training.")
         embeddings = self.extract_features(crops)
         reduced_data = self.reducer.fit_transform(embeddings)
         self.cluster_model.fit(reduced_data)
         self.is_trained = True
         
     def predict(self, frame: np.ndarray, detections: sv.Detections) -> np.ndarray:
-        """Dự đoán đội (0 hoặc 1) cho các bounding box trong frame."""
+        """Predict team (0 or 1) for each bounding box in the frame."""
         if not self.is_trained or len(detections.xyxy) == 0:
             return np.zeros(len(detections.xyxy), dtype=int)
             

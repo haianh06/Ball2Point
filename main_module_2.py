@@ -48,17 +48,17 @@ def main():
     out = None
 
     for frame_idx, frame in tqdm(enumerate(generator), total=total_frames):
-        # Vẽ bounding box lên frame thật
+        # Draw bounding box on real frame
         annotated_frame = annotator.draw(frame.copy(), frame_idx, tracking_data)
         
-        # Render bản đồ 2D
+        # Render 2D map
         tactical_frame = mod2_pipeline.process_frame(frame, frame_idx, tracking_data)
         
-        # Ghép 2 ảnh
+        # Stitch 2 frames
         annotated_frame, tactical_frame = resize_to_match_height(annotated_frame, tactical_frame)
         combined_frame = np.hstack((annotated_frame, tactical_frame))
         
-        # Ghi video
+        # Save video
         if out is None:
             h, w = combined_frame.shape[:2]
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -69,7 +69,7 @@ def main():
     if out is not None:
         out.release()
     cv2.destroyAllWindows()
-    print(f"\n[DONE] Pipeline hoàn tất. Video đã lưu tại: {OUTPUT_PATH}")
+    print(f"\n[DONE] Pipeline completed. Video saved at: {OUTPUT_PATH}")
 
 if __name__ == "__main__":
     main()

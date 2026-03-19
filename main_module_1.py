@@ -8,7 +8,7 @@ from module_1.post_processor import PostProcessor
 
 def main():
     if not os.path.exists(ModelConfig.INPUT_VIDEO_PATH):
-        print(f"LỖI: Không tìm thấy file tại {ModelConfig.INPUT_VIDEO_PATH}")
+        print(f"Cannot find file at {ModelConfig.INPUT_VIDEO_PATH}")
         return
 
     print("=== PHASE 1: Detection & Tracking ===")
@@ -55,7 +55,7 @@ def main():
 
     cap.release()
     out.release()
-    print("HOÀN TẤT!")
+    print("COMPLETE!")
 
 if __name__ == "__main__":
     main()

@@ -10,7 +10,7 @@ class SoccerDetector:
         self.device = '0' if torch.cuda.is_available() else 'cpu'
 
     def detect(self, frame: np.ndarray) -> Tuple[sv.Detections, sv.Detections, sv.Detections]:
-        """Trả về tuple: (players, ball, referees)"""
+        """Return: (players, ball, referees)"""
         results = self.model(frame, verbose=False)[0]
         detections = sv.Detections.from_ultralytics(results)
         

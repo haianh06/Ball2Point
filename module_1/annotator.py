@@ -20,7 +20,7 @@ class SoccerAnnotator:
         team_data = tracking_data.get('player_team_ids', {}).get(frame_idx, {})
         speed_info_data = tracking_data.get('player', {}).get(frame_idx, {}).get('speed_info', {})
         
-        # 1. Vẽ Cầu thủ
+        # 1. Draw Players
         if players_data:
             boxes, tracker_ids, class_ids = [], [], []
             for tid, box in players_data.items():
@@ -58,7 +58,7 @@ class SoccerAnnotator:
                                     (x_center - text_size[0]//2, y_bottom + 10 + text_size[1]),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
 
-        # 2. Vẽ Trọng tài
+        # 2. Draw Referees
         refs_data = tracking_data.get('referee', {}).get(frame_idx, {})
         if refs_data:
             ref_boxes = list(refs_data.values())
@@ -67,7 +67,7 @@ class SoccerAnnotator:
             self.ellipse_annotator.color_lookup = sv.ColorLookup.INDEX
             annotated = self.ellipse_annotator.annotate(annotated, ref_dets)
 
-        # 3. Vẽ Bóng
+        # 3. Draw Ball
         ball_box = tracking_data.get('ball', {}).get(frame_idx)
         if ball_box is not None:
             ball_det = sv.Detections(xyxy=np.array([ball_box]), class_id=np.array([0]))

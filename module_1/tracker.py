@@ -8,7 +8,7 @@ class PlayerTracker:
     )
         
     def update(self, detections: sv.Detections) -> sv.Detections:
-        """Cập nhật ID cho detections cầu thủ."""
+        """ID update with ByteTrack. Returns detections with tracker_id."""
         if len(detections.xyxy) == 0:
             return detections
         return self.tracker.update_with_detections(detections)

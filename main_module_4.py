@@ -24,7 +24,7 @@ def main():
     print("[1/4] Booting Models...")
     mod1_pipeline = Module1Pipeline()
     mod2_pipeline = TacticalPipeline()
-    mod4_pipeline = HeatmapPipeline() # Khởi tạo Module 4
+    mod4_pipeline = HeatmapPipeline()
     annotator = SoccerAnnotator()
 
     print("\n[2/4] PHASE 1: Tracking...")
@@ -38,17 +38,16 @@ def main():
     out = None
 
     for frame_idx, frame in tqdm(enumerate(generator), total=total_frames):
-        # 1. Trích xuất Tọa độ từ Module 2
+        # 1. Extract tactical data for this frame (including player positions) - this will be used both for drawing and for heatmap accumulation
         tactical_frame, pitch_data_with_ids = mod2_pipeline.process_frame(frame, frame_idx, tracking_data)
         
-        # 2. MODULE 4: Tích lũy tọa độ ngầm (Không vẽ lên video)
+        # 2. Accumulate heatmap data in Module 4
         pitch_data = mod2_pipeline.last_pitch_data if mod2_pipeline.last_pitch_data else {}
         mod4_pipeline.process_frame(pitch_data)
         
-        # 3. Vẽ Video Gốc (Chỉ vẽ ID cầu thủ, nếu không muốn ghép Tactical_frame thì bỏ qua)
+        # 3. Draw origin frame with bounding boxes
         annotated_frame = annotator.draw(frame.copy(), frame_idx, tracking_data)
         
-        # (Chỗ này cậu có thể hstack với tactical_frame hoặc chỉ xuất ảnh gốc tùy ý)
         if out is None:
             h, w = annotated_frame.shape[:2]
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -60,10 +59,10 @@ def main():
     cv2.destroyAllWindows()
     
     print("\n[4/4] PHASE 3: Exporting Heatmap Images...")
-    # XUẤT ẢNH: Lệnh này sẽ bung toàn bộ data đã tích lũy thành Folder Ảnh
+    # Export heatmap results after processing all frames
     mod4_pipeline.export_results()
     
-    print(f"\n[DONE] Pipeline hoàn tất.")
+    print(f"\n[DONE] Pipeline completed.")
 
 if __name__ == "__main__":
     main()

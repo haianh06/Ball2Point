@@ -47,18 +47,17 @@ def main():
     out = None
 
     for frame_idx, frame in tqdm(enumerate(generator), total=total_frames):
-        # 1. Vẽ Camera gốc (Chỉ chứa ID và Team)
+        # 1. Draw bounding box on real frame
         annotated_frame = annotator.draw(frame.copy(), frame_idx, tracking_data)
         
-        # 2. Xử lý Module 2: Trích xuất tọa độ mét và render bản đồ 2D cơ bản
+        # 2. Extract tactical data for this frame (including player positions) - this will be used both for drawing and for pitch control calculation
         tactical_frame, pitch_data_with_ids = mod2_pipeline.process_frame(frame, frame_idx, tracking_data)
         
-        # 3. Xử lý Module 3: Phủ lớp Voronoi lên bản đồ 2D
-        # Lưu ý: mod2_pipeline.last_pitch_data chứa dữ liệu mét đã được bóc tách
+        # 3. Voronoi and Pitch Contrl
         pitch_data = mod2_pipeline.last_pitch_data if mod2_pipeline.last_pitch_data else {}
         tactical_frame = mod3_pipeline.process_frame(tactical_frame, pitch_data)
         
-        # 4. Ghép ảnh Side-by-side
+        # 4. Stiching images Side-by-side
         annotated_frame, tactical_frame = resize_to_match_height(annotated_frame, tactical_frame)
         combined_frame = np.hstack((annotated_frame, tactical_frame))
         
@@ -72,7 +71,7 @@ def main():
         out.release()
     cv2.destroyAllWindows()
     
-    print(f"\n[DONE] Pipeline hoàn tất. Video đã lưu tại: {OUTPUT_PATH}")
+    print(f"\n[DONE] Pipeline completed. Saved video at: {OUTPUT_PATH}")
 
 if __name__ == "__main__":
     main()

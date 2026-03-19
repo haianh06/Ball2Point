@@ -24,21 +24,20 @@ def main():
     print("[1/4] Khởi tạo hệ thống Tracking...")
     mod1_pipeline = Module1Pipeline()
     spatial_engine = SpatialEngine()
-    # Setting giống Abdullah Tarek: Tính quãng đường mỗi 5 frames
+    # Setting frame_window=5 means speed will be calculated based on the last 5 frames of movement, which provides a smoother estimate at the cost of some responsiveness to sudden changes in speed.
     speed_estimator = SpeedAndDistanceEstimator(frame_rate=video_info.fps, frame_window=5)
     annotator = SoccerAnnotator()
 
-    print("\n[2/4] PHASE 1: Tracking & Phân chia đội...")
+    print("\n[2/4] PHASE 1: Tracking & Clustering...")
     tracking_data = mod1_pipeline.process_video(VIDEO_PATH, max_frames=MAX_FRAMES)
     tracking_data = PostProcessor.interpolate_ball(tracking_data, max_gap=30)
 
-    print("\n[3/4] PHASE 2: Chạy Spatial Math & Tính Vận tốc (Post-Processing)...")
-    # Quét ngầm để lấy tọa độ mét
+    print("\n[3/4] PHASE 2: Running Spatial Math & Speed Calculation (Post-Processing)...")
     generator = get_video_generator(VIDEO_PATH, max_frames=MAX_FRAMES)
     total_frames = video_info.total_frames if MAX_FRAMES == -1 else min(MAX_FRAMES, video_info.total_frames)
     
     spatial_data = {}
-    for frame_idx, frame in tqdm(enumerate(generator), total=total_frames, desc="Tính toán không gian"):
+    for frame_idx, frame in tqdm(enumerate(generator), total=total_frames, desc="Space & Speed Calculation"):
         spatial_engine.update_homography(frame)
         players_dict = tracking_data.get('player', {}).get(frame_idx, {})
         
@@ -50,15 +49,14 @@ def main():
                     if pts:
                         spatial_data[frame_idx][tid] = pts[0]
                         
-    # Tính vận tốc và ghi đè vào tracking_data giống hệt logic repo Tarek
+    # Speed calculation is done in post-processing to avoid slowing down the main tracking loop. It uses the spatial data collected to compute speed and distance for each player.
     tracking_data = speed_estimator.calculate_speed_and_distance(tracking_data, spatial_data)
 
     print("\n[4/4] PHASE 3: Render Video...")
     generator = get_video_generator(VIDEO_PATH, max_frames=MAX_FRAMES)
     out = None
 
-    for frame_idx, frame in tqdm(enumerate(generator), total=total_frames, desc="Vẽ Video"):
-        # Vẽ trực tiếp lên frame camera, không có Minimap
+    for frame_idx, frame in tqdm(enumerate(generator), total=total_frames, desc="Drawing Video"):
         annotated_frame = annotator.draw(frame.copy(), frame_idx, tracking_data)
         
         if out is None:
@@ -71,8 +69,8 @@ def main():
         out.release()
     cv2.destroyAllWindows()
     
-    print(f"\n[DONE] Đã xuất video tại: {OUTPUT_PATH}")
-    print("Dữ liệu đã được lưu tại: outputs/player_statistics.json")
+    print(f"\n[DONE] Saved video at: {OUTPUT_PATH}")
+    print("Data saved at: outputs/player_statistics.json")
 
 if __name__ == "__main__":
     main()

@@ -8,11 +8,9 @@ import pandas as pd
 import streamlit as st
 from pathlib import Path
 
-# Fix đường dẫn hệ thống để import không bị lỗi module not found
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 
-# --- IMPORTS TỪ 5 MODULE ---
 from module_1.pipeline import Module1Pipeline
 from module_1.post_processor import PostProcessor
 from module_1.annotator import SoccerAnnotator
@@ -24,12 +22,11 @@ from module_3.speed_estimator import SpeedAndDistanceEstimator
 from module_4.pipeline import HeatmapPipeline
 from module_5.pipeline import PitchControlPipeline
 
-# --- CẤU HÌNH GIAO DIỆN ---
+# UI Config 
 st.set_page_config(page_title="Ball2Point", page_icon="⚽", layout="wide")
 PROJECT_ROOT = Path(__file__).resolve().parents[1] if Path(__file__).parent.name == 'app' else Path(__file__).resolve().parent
 
 def resize_to_match_height(img1: np.ndarray, img2: np.ndarray):
-    """Hàm đồng bộ chiều cao 2 ảnh để ghép Side-by-side"""
     h1 = img1.shape[0]
     h2, w2 = img2.shape[:2]
     if h1 != h2:
@@ -38,33 +35,33 @@ def resize_to_match_height(img1: np.ndarray, img2: np.ndarray):
     return img1, img2
 
 def convert_to_h264(input_path: str, output_path: str):
-    """Sử dụng FFmpeg để convert mp4v sang chuẩn H.264 xem được trên HTML5 Video"""
+    """FFmpeg command to convert video to H.264 format for better web compatibility"""
     command = f'ffmpeg -y -i "{input_path}" -vcodec libx264 -crf 23 -preset fast "{output_path}"'
     subprocess.run(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 def main():
     st.title("⚽ Ball2Point")
-    st.markdown("Hệ thống tự động phân tích chiến thuật, theo dõi thể lực và kiểm soát không gian.")
+    st.markdown("A system trying to do anything with soccer videos")
 
-    # --- SIDEBAR: ĐIỀU KHIỂN ---
+    # Sidebar
     with st.sidebar:
-        st.header("⚙️ Nạp dữ liệu")
-        uploaded_file = st.file_uploader("Tải Video Trận Đấu (Không giới hạn dung lượng)", type=['mp4', 'avi', 'mov'])
+        st.header("⚙️ Input & Settings")
+        uploaded_file = st.file_uploader("Upload Video", type=['mp4', 'avi', 'mov'])
         
         st.markdown("---")
-        st.subheader("Bật/Tắt Tính Năng")
+        st.subheader("Features Options")
         run_minimap = st.toggle("🗺️ Tactical Minimap", value=True)
         run_speed = st.toggle("⚡ Speed & Distance", value=True)
         run_heatmap = st.toggle("🔥 Physical Heatmap", value=True)
         run_voronoi = st.toggle("🛡️ Pitch Control (Voronoi)", value=True)
         
         st.markdown("---")
-        st.subheader("Tùy chọn Render")
-        process_mode = st.radio("Chế độ xử lý:", ["Toàn bộ Video", "Chỉ Test (500 Frames)"])
+        st.subheader("Render Options")
+        process_mode = st.radio("Processing Mode:", ["Full Video", "Test Only (500 Frames)"])
         
-        start_btn = st.button("🚀 XỬ LÝ DỮ LIỆU", type="primary", use_container_width=True)
+        start_btn = st.button("🚀 Analyze", type="primary", use_container_width=True)
 
-    # --- LUỒNG XỬ LÝ CHÍNH ---
+    # Main Logic
     if start_btn and uploaded_file is not None:
         input_path = str(PROJECT_ROOT / "inputs/temp_upload.mp4")
         temp_cv2_output = str(PROJECT_ROOT / "outputs/temp_render.mp4")
@@ -73,20 +70,20 @@ def main():
         os.makedirs(os.path.dirname(input_path), exist_ok=True)
         os.makedirs(os.path.dirname(final_web_output), exist_ok=True)
         
-        # FIX LỖI RAM: Lưu file dung lượng lớn bằng chunking
+        # Chungking
         with open(input_path, "wb") as f:
             bytes_data = uploaded_file.getbuffer()
             f.write(bytes_data)
                 
         video_info = get_video_info(input_path)
-        actual_frames = video_info.total_frames if process_mode == "Toàn bộ Video" else min(200, video_info.total_frames)
+        actual_frames = video_info.total_frames if process_mode == "Full Video" else min(200, video_info.total_frames)
 
         # UI Progress
         progress_bar = st.progress(0)
         status_text = st.empty()
 
-        # Khởi tạo Models
-        status_text.text("[Booting] Nạp AI Models vào VRAM...")
+        # Models
+        status_text.text("AI models is ready...")
         mod1 = Module1Pipeline()
         annotator = SoccerAnnotator()
         
@@ -97,7 +94,7 @@ def main():
         mod5 = PitchControlPipeline() if run_voronoi else None
 
         # PHASE 1
-        status_text.text("[Phase 1/4] Detection & Tracking (Quá trình này tùy thuộc vào GPU)...")
+        status_text.text("[Phase 1/4] Detection & Tracking...")
         tracking_data = mod1.process_video(input_path, max_frames=actual_frames)
         tracking_data = PostProcessor.interpolate_ball(tracking_data, max_gap=30)
         progress_bar.progress(30)
@@ -112,7 +109,6 @@ def main():
                 players_dict = tracking_data.get('player', {}).get(frame_idx, {})
                 spatial_data[frame_idx] = {}
                 
-                # Bỏ lệnh if matrix is not None để kích hoạt Immortal Fallback
                 for tid, box in players_dict.items():
                     if tid != 'speed_info':
                         pts = spatial_engine.pixels_to_meters([box])
@@ -126,7 +122,7 @@ def main():
         gen = get_video_generator(input_path, max_frames=actual_frames)
         out = None
         
-        # Container chứa Live Preview
+        # Preview container
         preview_container = st.empty()
 
         for frame_idx, frame in enumerate(gen):
@@ -148,18 +144,16 @@ def main():
                     ann_frame, tac_frame = resize_to_match_height(ann_frame, tac_frame)
                     final_frame = np.hstack((ann_frame, tac_frame))
 
-            # --- LIVE PREVIEW (Skipping frames để tối ưu trình duyệt) ---
+            # --- LIVE PREVIEW ---
             if frame_idx % 5 == 0:
                 progress_bar.progress(50 + int((frame_idx / actual_frames) * 30))
-                # Streamlit yêu cầu RGB, OpenCV dùng BGR
                 preview_rgb = cv2.cvtColor(final_frame, cv2.COLOR_BGR2RGB)
                 preview_container.image(
                     preview_rgb, 
-                    caption=f"Tiến trình Render: Frame {frame_idx}/{actual_frames} ⏳", 
+                    caption=f"Rendering Progress: Frame {frame_idx}/{actual_frames} ⏳", 
                     use_container_width=True
                 )
 
-            # Ghi file ngầm vào đĩa
             if out is None:
                 h, w = final_frame.shape[:2]
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -168,7 +162,7 @@ def main():
 
         if out: out.release()
         cv2.destroyAllWindows()
-        preview_container.empty()  # Xóa vùng Preview sau khi render xong
+        preview_container.empty()
         
         # PHASE 4
         status_text.text("[Phase 4/4] Encoding H.264 & Exporting Data...")
@@ -180,26 +174,26 @@ def main():
             mod4.export_results()
             
         progress_bar.progress(100)
-        status_text.success("✅ Phân tích hoàn tất!")
+        status_text.success("✅ Analysis completed!")
 
-        # --- TẠO VIEW DASHBOARD KẾT QUẢ ---
+        # --- DASHBOARD ---
         st.markdown("---")
         
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric(label="Tổng số khung hình", value=f"{actual_frames}")
+            st.metric(label="Total Frames", value=f"{actual_frames}")
         with col2:
             st.metric(label="FPS Video", value=f"{video_info.fps}")
         with col3:
-            st.metric(label="Độ phân giải", value=f"{video_info.resolution_wh[0]}x{video_info.resolution_wh[1]}")
+            st.metric(label="Resolution", value=f"{video_info.resolution_wh[0]}x{video_info.resolution_wh[1]}")
 
-        tab1, tab2, tab3 = st.tabs(["🎥 Video Phân Tích", "📈 Thông Số Thể Lực", "🔥 Thư Viện Bản Đồ Nhiệt"])
+        tab1, tab2, tab3 = st.tabs(["🎥 Analysis Video", "📈 Physical Statistics", "🔥 Heatmap Library"])
 
         with tab1:
             if os.path.exists(final_web_output):
                 st.video(final_web_output)
             else:
-                st.error("Lỗi: Không thể tìm thấy video đã render (FFmpeg có thể chưa được cài đặt).")
+                st.error("Cannnot find the rendered video. Please check if the FFmpeg conversion was successful.")
 
         with tab2:
             stats_path = str(PROJECT_ROOT / "outputs/player_statistics.json")
@@ -209,7 +203,7 @@ def main():
                 
                 # Biến JSON thành Pandas DataFrame
                 df = pd.DataFrame(stats_data).T
-                df.index.name = "Mã Cầu Thủ (ID)"
+                df.index.name = "Player ID"
                 
                 # --- LOGIC TÍNH VẬN TỐC TRUNG BÌNH ---
                 total_time_sec = actual_frames / video_info.fps
@@ -220,12 +214,12 @@ def main():
                 
                 # Đổi tên cột cho UI
                 df.rename(columns={
-                    "total_distance_m": "Quãng đường (Mét)",
-                    "avg_speed_kmh": "Vận tốc TB (m/s)"
+                    "total_distance_m": "Total Distance (m)",
+                    "avg_speed_kmh": "Average Speed (m/s)"
                 }, inplace=True)
                 
                 # Lọc bỏ cột top_speed_kmh bị nhiễu, chỉ show Quãng đường và Vận tốc TB
-                df_display = df[["Quãng đường (Mét)", "Vận tốc TB (m/s)"]]
+                df_display = df[["Total Distance (m)", "Average Speed (m/s)"]]
                 
                 # Style Dataframe: Highlight giá trị cao nhất
                 st.dataframe(
@@ -234,7 +228,7 @@ def main():
                     height=400
                 )
             else:
-                st.info("Chưa có dữ liệu thống kê thể lực. Vui lòng bật Module Speed.")
+                st.info("No physical statistics data available. Please enable the Speed Module.")
 
         with tab3:
             heatmap_dir = str(PROJECT_ROOT / "outputs/player_heatmaps")
@@ -245,10 +239,10 @@ def main():
                     for idx, img_path in enumerate(images):
                         cols[idx % 3].image(img_path, caption=os.path.basename(img_path).split('.')[0], use_container_width=True)
                 else:
-                    st.info("Không tìm thấy ảnh. Đội hình có thể không di chuyển.")
+                    st.info("No heatmaps found. The team may not have moved.")
 
     elif start_btn and uploaded_file is None:
-        st.error("⚠️ Phải nạp video đầu vào trước khi kích hoạt.")
+        st.error("⚠️ A video file must be uploaded before starting the analysis.")
 
 if __name__ == "__main__":
     main()
