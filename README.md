@@ -261,38 +261,6 @@ Seaborn 0.12+             # Statistical plotting
 
 ## 🛠️ Installation
 
-### Prerequisites
-
-**You can download our models here:
-
-**1. Install FFmpeg (Required for video encoding)**
-
-**Windows:**
-```powershell
-# Using Windows Package Manager (recommended)
-winget install ffmpeg
-
-# OR manually: https://www.gyan.dev/ffmpeg/builds/
-# Add to System PATH after installation
-```
-
-**macOS:**
-```bash
-brew install ffmpeg
-```
-
-**Linux (Ubuntu/Debian):**
-```bash
-sudo apt update && sudo apt install ffmpeg
-```
-
-**Verify installation:**
-```bash
-ffmpeg -version
-```
-
----
-
 ### Step 1: Clone Repository
 
 ```bash
@@ -306,13 +274,13 @@ cd Ball2Point
 
 ```bash
 # Create virtual environment
-python -m venv venv
+uv venv
 
 # Activate (Windows)
-venv\Scripts\activate
+.venv\Scripts\activate
 
 # Activate (Linux/Mac)
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ---
@@ -321,13 +289,13 @@ source venv/bin/activate
 
 ```bash
 # For NVIDIA GPU with CUDA 12.1 (Recommended)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # For CPU only (slower)
-pip install torch torchvision torchaudio
+uv pip install torch torchvision torchaudio
 
 # For AMD GPU (ROCm)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
+uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
 ```
 
 ---
@@ -335,35 +303,12 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 ### Step 4: Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 **Or manually:**
 ```bash
-pip install ultralytics opencv-python pandas numpy matplotlib seaborn streamlit supervision pycocotools scikit-learn umap-learn filterpy
-```
-
----
-
-### Step 5: Download Model Weights
-
-Download pre-trained weights and place in `Models/weights/`:
-
-```bash
-# Create directories
-mkdir -p Models/weights
-
-# Download models
-wget https://your-server.com/best_detection.pt -O Models/weights/best_detection.pt
-wget https://your-server.com/best_keypoints.pt -O Models/weights/best_keypoints.pt
-
----
-
-### Verify Installation
-
-```bash
-python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA Available: {torch.cuda.is_available()}')"
-python -c "from yolov8 import YOLO; print('YOLO imported successfully')"
+uv pip install ultralytics opencv-python pandas numpy matplotlib seaborn streamlit supervision pycocotools scikit-learn umap-learn filterpy
 ```
 
 ---
