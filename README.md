@@ -353,15 +353,9 @@ Download pre-trained weights and place in `Models/weights/`:
 # Create directories
 mkdir -p Models/weights
 
-# Download models (replace URLs with actual links)
+# Download models
 wget https://your-server.com/best_detection.pt -O Models/weights/best_detection.pt
 wget https://your-server.com/best_keypoints.pt -O Models/weights/best_keypoints.pt
-```
-
-**Or manually:** Download and place:
-- `best_detection.pt` - YOLO object detection model
-- `best_keypoints.pt` - YOLO pose estimation model
-- `best_detection_v2.pt` - (Optional) Improved detection variant
 
 ---
 
