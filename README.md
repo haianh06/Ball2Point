@@ -485,7 +485,7 @@ If you use Ball2Point in your research, please cite:
 ```bibtex
 @software{ball2point2026,
   title={Ball2Point: AI-Powered Football Tactical Analysis},
-  author={FanaDo},
+  author={Fanado},
   year={2026},
   url={https://github.com/yourusername/Ball2Point}
 }
