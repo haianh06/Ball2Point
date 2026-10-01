@@ -319,6 +319,8 @@ uv pip install ultralytics opencv-python pandas numpy matplotlib seaborn streaml
 
 ```bash
 # Ensure virtual environment is activated
+cd app
+#then
 streamlit run app.py
 ```
 
